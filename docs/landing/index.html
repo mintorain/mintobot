@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>민토봇 — AI 출판 챗봇</title>
+<meta name="description" content="소설/에세이 창작부터 출판까지, 77개 AI 도구가 내장된 오픈소스 출판 챗봇">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050a18;--bg2:#0a1628;--bg3:#111d35;--text:#e2e8f0;--dim:#7b8ba5;--glow-blue:#3b82f6;--glow-purple:#8b5cf6;--glow-cyan:#06b6d4;--neon:linear-gradient(135deg,#06b6d4,#3b82f6,#8b5cf6);--card:rgba(15,25,50,0.8);--border:rgba(59,130,246,0.15);--radius:16px}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:#60a5fa;text-decoration:none;transition:color .2s}
+a:hover{color:#93c5fd}
+::selection{background:rgba(59,130,246,.3)}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+section{padding:120px 0;position:relative}
+@media(max-width:768px){section{padding:80px 0}}
+
+/* Animated background grid */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:
+  linear-gradient(rgba(59,130,246,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(59,130,246,.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+
+/* Floating orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:float 20s infinite ease-in-out}
+.orb-1{width:400px;height:400px;background:rgba(59,130,246,.08);top:-100px;right:-100px}
+.orb-2{width:350px;height:350px;background:rgba(139,92,246,.06);bottom:10%;left:-100px;animation-delay:-7s}
+.orb-3{width:300px;height:300px;background:rgba(6,182,212,.05);top:40%;right:5%;animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0)}25%{transform:translate(30px,-40px)}50%{transform:translate(-20px,30px)}75%{transform:translate(40px,20px)}}
+
+/* Fade & slide animations */
+.fade{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1)}
+.fade.visible{opacity:1;transform:translateY(0)}
+.fade-delay-1{transition-delay:.1s}
+.fade-delay-2{transition-delay:.2s}
+.fade-delay-3{transition-delay:.3s}
+
+/* Glowing line */
+.glow-line{width:80px;height:4px;background:var(--neon);border-radius:2px;margin:0 auto 20px;box-shadow:0 0 20px rgba(59,130,246,.4)}
+
+/* Section title */
+.section-title{text-align:center;margin-bottom:64px}
+.section-title h2{font-size:clamp(2rem,4vw,2.8rem);font-weight:900;margin-bottom:12px;letter-spacing:-1px}
+.section-title h2 span{background:var(--neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.section-title p{color:var(--dim);font-size:1.1rem;max-width:500px;margin:0 auto}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative}
+.hero-content{position:relative;z-index:1}
+.hero .logo{font-size:5rem;margin-bottom:20px;filter:drop-shadow(0 0 40px rgba(59,130,246,.3));animation:pulse-glow 3s infinite}
+@keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 40px rgba(59,130,246,.3))}50%{filter:drop-shadow(0 0 60px rgba(139,92,246,.4))}}
+.hero h1{font-size:clamp(2.5rem,7vw,4.5rem);font-weight:900;margin-bottom:20px;line-height:1.15;letter-spacing:-2px}
+.hero h1 .gradient{background:var(--neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .tagline{font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;margin-bottom:16px;color:#fff}
+.hero .sub{color:var(--dim);font-size:clamp(1rem,2vw,1.2rem);max-width:650px;margin:0 auto 36px;line-height:1.8}
+.hero .badge{margin-bottom:28px}
+.hero .badge img{height:28px;vertical-align:middle;border-radius:4px}
+.hero .stats{display:flex;gap:48px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
+.hero .stat{text-align:center}
+.hero .stat-num{font-size:2.5rem;font-weight:900;background:var(--neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .stat-label{font-size:.9rem;color:var(--dim);margin-top:4px}
+.cta-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:16px 32px;border-radius:14px;font-weight:700;font-size:1.05rem;border:none;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-3px);text-decoration:none}
+.btn-primary{background:var(--neon);color:#fff;box-shadow:0 4px 30px rgba(59,130,246,.35)}
+.btn-primary:hover{box-shadow:0 8px 40px rgba(59,130,246,.5)}
+.btn-primary::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(transparent,rgba(255,255,255,.1),transparent);transform:rotate(45deg);animation:shine 3s infinite}
+@keyframes shine{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+.btn-secondary{background:rgba(255,255,255,.05);color:var(--text);border:1.5px solid var(--border);backdrop-filter:blur(4px)}
+.btn-secondary:hover{border-color:var(--glow-cyan);color:#fff;box-shadow:0 0 20px rgba(6,182,212,.2)}
+
+/* ===== FEATURES ===== */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;transition:all .4s;position:relative;overflow:hidden;backdrop-filter:blur(10px)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--neon);opacity:0;transition:opacity .3s}
+.feature-card:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.3);box-shadow:0 8px 40px rgba(59,130,246,.1)}
+.feature-card:hover::before{opacity:1}
+.feature-card .icon{font-size:2.8rem;margin-bottom:16px;display:block}
+.feature-card h3{font-size:1.3rem;font-weight:800;margin-bottom:10px;letter-spacing:-.3px}
+.feature-card p{color:var(--dim);font-size:1rem;line-height:1.7}
+
+/* ===== HOW IT WORKS ===== */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px}
+.step{text-align:center;position:relative}
+.step-num{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;background:var(--neon);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;box-shadow:0 0 30px rgba(59,130,246,.3);position:relative}
+.step-num::after{content:'';position:absolute;width:88px;height:88px;border-radius:50%;border:1px solid rgba(59,130,246,.2);animation:ring-pulse 2s infinite}
+@keyframes ring-pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.4);opacity:0}}
+.step h3{font-size:1.25rem;font-weight:800;margin-bottom:10px}
+.step p{color:var(--dim);font-size:1rem}
+.step code{color:var(--glow-cyan);font-family:'JetBrains Mono',monospace;font-size:.95rem;background:rgba(6,182,212,.1);padding:2px 8px;border-radius:4px}
+
+/* ===== TOOLS ===== */
+.tools-section{background:var(--card);border-radius:var(--radius);padding:40px;border:1px solid var(--border);backdrop-filter:blur(10px)}
+.tools-toggle{width:100%;background:none;border:none;color:var(--text);font-size:1.3rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;padding:8px 0}
+.tools-toggle:hover{color:#60a5fa}
+.tools-toggle .arrow{transition:transform .3s;font-size:1.4rem}
+.tools-toggle.open .arrow{transform:rotate(180deg)}
+.tools-content{max-height:0;overflow:hidden;transition:max-height .6s cubic-bezier(.4,0,.2,1)}
+.tools-content.open{max-height:2000px}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding-top:28px}
+.tool-cat{background:rgba(5,10,24,.6);border-radius:12px;padding:18px;border:1px solid var(--border);transition:border-color .2s}
+.tool-cat:hover{border-color:rgba(6,182,212,.3)}
+.tool-cat h4{font-size:.95rem;font-weight:700;margin-bottom:4px;color:var(--glow-cyan)}
+.tool-cat p{font-size:.85rem;color:var(--dim)}
+
+/* ===== INSTALL ===== */
+.code-block{background:rgba(5,10,24,.9);border:1px solid var(--border);border-radius:14px;padding:28px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.9rem;line-height:2;color:#c9d1d9;position:relative;backdrop-filter:blur(10px)}
+.code-block .comment{color:#6b7d8e}
+.code-block .cmd{color:var(--glow-cyan)}
+.code-block .str{color:#a5d6ff}
+.install-links{margin-top:28px;display:flex;gap:32px;flex-wrap:wrap}
+.install-links a{color:var(--glow-cyan);font-weight:600;font-size:1.05rem;transition:color .2s}
+.install-links a:hover{color:#fff}
+
+/* ===== MODES ===== */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.mode-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;backdrop-filter:blur(10px);transition:all .3s}
+.mode-card:hover{border-color:rgba(59,130,246,.3);box-shadow:0 4px 20px rgba(59,130,246,.1)}
+.mode-card h3{font-weight:800;margin-bottom:10px;font-size:1.2rem}
+.mode-card p{color:var(--dim);font-size:1rem}
+
+/* ===== WIDGET ===== */
+.widget-section .code-block{font-size:.88rem}
+
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--border);padding:64px 0 48px;position:relative;z-index:1}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;margin-bottom:48px}
+.footer-col h4{font-size:1rem;font-weight:800;margin-bottom:16px;color:#fff}
+.footer-col p,.footer-col a{color:var(--dim);font-size:.95rem;display:block;margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--glow-cyan)}
+.footer-profile{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.footer-avatar{width:56px;height:56px;border-radius:50%;background:var(--neon);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.footer-name{font-size:1.1rem;font-weight:800;color:#fff}
+.footer-role{font-size:.9rem;color:var(--dim)}
+.footer-bottom{text-align:center;padding-top:32px;border-top:1px solid var(--border);color:var(--dim);font-size:.85rem}
+.footer-bottom a{color:var(--dim)}
+.footer-bottom a:hover{color:var(--glow-cyan)}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero .stats{gap:32px}
+  .hero .stat-num{font-size:2rem}
+  .features-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Hero -->
+<section class="hero">
+<div class="hero-content fade">
+<div class="logo">🌧️</div>
+<h1><span class="gradient">민토봇</span></h1>
+<p class="tagline">창작부터 출판까지, AI가 전부 해드립니다</p>
+<p class="sub">소설·에세이 집필, AI 교정, PDF/EPUB 변환, 표지 생성, 인세 계산, 마케팅까지.<br>당신의 이야기가 책이 되는 가장 빠른 길.</p>
+<div class="stats">
+<div class="stat"><div class="stat-num">77</div><div class="stat-label">AI 도구</div></div>
+<div class="stat"><div class="stat-num">8</div><div class="stat-label">판형 지원</div></div>
+<div class="stat"><div class="stat-num">5분</div><div class="stat-label">설치 완료</div></div>
+</div>
+<div class="badge"><a href="https://github.com/mintorain/mintobot"><img src="https://img.shields.io/github/stars/mintorain/mintobot?style=for-the-badge&color=0ea5e9&labelColor=0a1628&label=GitHub%20Stars" alt="GitHub Stars"></a></div>
+<div class="cta-group">
+<a href="https://github.com/mintorain/mintobot" class="btn btn-primary">⚡ GitHub에서 다운로드</a>
+<a href="https://duon.myds.me:8443/demo" class="btn btn-secondary">🚀 데모 체험하기</a>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2><span>주요 기능</span></h2>
+<p>출판의 모든 과정을 AI가 도와드립니다</p>
+</div>
+<div class="features-grid">
+<div class="feature-card fade fade-delay-1"><span class="icon">✍️</span><h3>창작 지원</h3><p>소설/에세이 프로젝트 관리, 캐릭터 설정, 세계관 구축. AI가 구성·캐릭터·흐름·문체·대화 5개 항목으로 피드백합니다.</p></div>
+<div class="feature-card fade fade-delay-2"><span class="icon">📝</span><h3>교정/퇴고</h3><p>20+개 맞춤법 규칙, 문체 일관성 분석, 중복 표현 탐지. 원고를 프로처럼 다듬어 드립니다.</p></div>
+<div class="feature-card fade fade-delay-3"><span class="icon">📚</span><h3>출판 변환</h3><p>PDF·EPUB·DOCX·HTML 변환, 신국판·46판·A5 등 8종 판형, 장르별 표지 자동 생성.</p></div>
+<div class="feature-card fade fade-delay-1"><span class="icon">💰</span><h3>출판 비즈니스</h3><p>인세 계산, 제작비 견적(한국 단가표 내장), 출판 일정, 손익분기점. 데이터로 의사결정하세요.</p></div>
+<div class="feature-card fade fade-delay-2"><span class="icon">📣</span><h3>마케팅</h3><p>교보/YES24용 소개글, 띠지 문구, SNS 홍보문 자동 생성. 독자 타겟까지 분석합니다.</p></div>
+<div class="feature-card fade fade-delay-3"><span class="icon">🔍</span><h3>분석 & 검증</h3><p>원고 통계, 유사 도서 검색, 다국어 번역, EPUB 검증. 출간 전 모든 것을 점검합니다.</p></div>
+</div>
+</div>
+</section>
+
+<!-- How it works -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2><span>3단계</span>면 충분합니다</h2>
+</div>
+<div class="steps">
+<div class="step fade fade-delay-1"><div class="step-num">1</div><h3>설치</h3><p>GitHub에서 클론하고<br><code>pip install</code> 한 줄이면 끝</p></div>
+<div class="step fade fade-delay-2"><div class="step-num">2</div><h3>실행</h3><p><code>python -m src.main</code><br>봇이 깨어납니다</p></div>
+<div class="step fade fade-delay-3"><div class="step-num">3</div><h3>대화</h3><p>Telegram에서<br><strong>"소설 쓰자"</strong> 한마디면 시작</p></div>
+</div>
+</div>
+</section>
+
+<!-- 77 Tools -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2><span>77개</span> AI 도구</h2>
+<p>출판에 필요한 모든 것이 내장되어 있습니다</p>
+</div>
+<div class="tools-section fade">
+<button class="tools-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+<span>📦 카테고리별 도구 목록 보기</span><span class="arrow">▼</span>
+</button>
+<div class="tools-content">
+<div class="tools-grid">
+<div class="tool-cat"><h4>🔧 기본 (4)</h4><p>날짜, 날씨, 캘린더, 검색</p></div>
+<div class="tool-cat"><h4>✍️ 창작 (14)</h4><p>프로젝트, 챕터, 개요, 시놉시스</p></div>
+<div class="tool-cat"><h4>📖 소설 (7)</h4><p>캐릭터, 세계관, 챕터 개요</p></div>
+<div class="tool-cat"><h4>📤 내보내기 (4)</h4><p>원고 변환, 프리셋, 표지</p></div>
+<div class="tool-cat"><h4>✏️ 교정 (3)</h4><p>맞춤법, 문체, 중복 탐지</p></div>
+<div class="tool-cat"><h4>📊 ISBN (3)</h4><p>바코드, 검증, 판권 페이지</p></div>
+<div class="tool-cat"><h4>🔄 버전 관리 (4)</h4><p>히스토리, diff, 롤백</p></div>
+<div class="tool-cat"><h4>📦 패키징 (3)</h4><p>ZIP, 시놉시스, 체크리스트</p></div>
+<div class="tool-cat"><h4>🤖 AI 피드백 (3)</h4><p>챕터, 캐릭터, 흐름 분석</p></div>
+<div class="tool-cat"><h4>🔍 RAG (4)</h4><p>인덱싱, 검색, 목록, 제거</p></div>
+<div class="tool-cat"><h4>🧠 메모리 (4)</h4><p>팩트, 메모, 컨텍스트</p></div>
+<div class="tool-cat"><h4>📈 원고 분석 (4)</h4><p>통계, 목차, 참고문헌, 색인</p></div>
+<div class="tool-cat"><h4>💰 비즈니스 (4)</h4><p>인세, 제작비, 일정, BEP</p></div>
+<div class="tool-cat"><h4>📣 마케팅 (4)</h4><p>소개글, 띠지, SNS, 타겟</p></div>
+<div class="tool-cat"><h4>🏪 시장 조사 (2)</h4><p>유사도서, 카테고리</p></div>
+<div class="tool-cat"><h4>🌍 번역 (2)</h4><p>번역, 용어집 관리</p></div>
+<div class="tool-cat"><h4>📱 EPUB (2)</h4><p>구조 검증, 메타데이터</p></div>
+<div class="tool-cat"><h4>🌐 웹 (3)</h4><p>미리보기, 대시보드, 통계</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Install -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2><span>5분</span>이면 시작</h2>
+<p>복사 → 붙여넣기 → 실행</p>
+</div>
+<div class="fade">
+<div class="code-block"><span class="comment"># 1. 저장소 클론</span>
+<span class="cmd">git clone</span> <span class="str">https://github.com/mintorain/mintobot.git</span>
+<span class="cmd">cd</span> mintobot
+
+<span class="comment"># 2. 의존성 설치</span>
+<span class="cmd">pip install</span> -r requirements.txt
+
+<span class="comment"># 3. 환경 설정</span>
+<span class="cmd">cp</span> .env.example .env
+<span class="comment"># .env 파일을 열어 아래 항목을 설정하세요:</span>
+<span class="comment">#   API_MODE=direct</span>
+<span class="comment">#   ANTHROPIC_API_KEY=sk-ant-...</span>
+<span class="comment">#   TELEGRAM_BOT_TOKEN=123456:ABC...</span>
+
+<span class="comment"># 4. 실행! 🚀</span>
+<span class="cmd">python</span> -m src.main</div>
+<div class="install-links">
+<a href="https://console.anthropic.com" target="_blank">🔑 Anthropic API 키 발급 →</a>
+<a href="https://t.me/BotFather" target="_blank">🤖 Telegram 봇 생성 →</a>
+<a href="https://github.com/mintorain/mintobot" target="_blank">📖 전체 문서 보기 →</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Modes -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2>실행 <span>모드</span></h2>
+<p>환경에 맞게 선택하세요</p>
+</div>
+<div class="modes">
+<div class="mode-card fade"><h3>⚡ Direct 모드</h3><p>Anthropic API를 직접 호출하는 <strong>독립 실행</strong> 모드. 설정 3줄이면 바로 사용. 개인 사용에 최적.</p></div>
+<div class="mode-card fade"><h3>🔗 Gateway 모드</h3><p>OpenClaw Gateway 경유. 멀티 에이전트, 세션 관리 등 <strong>고급 기능</strong> 활용 가능.</p></div>
+</div>
+</div>
+</section>
+
+<!-- Widget -->
+<section>
+<div class="container">
+<div class="section-title fade">
+<div class="glow-line"></div>
+<h2>웹 <span>위젯</span></h2>
+<p>홈페이지에 채팅 버블을 한 줄로 추가하세요</p>
+</div>
+<div class="fade">
+<div class="code-block"><span class="comment">&lt;!-- 이 코드를 HTML에 추가하면 채팅 버블이 나타납니다 --&gt;</span>
+&lt;<span class="cmd">script</span>
+  <span class="str">src</span>=<span class="str">"https://YOUR_HOST:8080/widget/chat.js"</span>
+  <span class="str">data-api</span>=<span class="str">"https://YOUR_HOST:8080"</span>
+  <span class="cmd">async</span>&gt;&lt;/<span class="cmd">script</span>&gt;</div>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+<div class="footer-grid">
+<div class="footer-col">
+<div class="footer-profile">
+<div class="footer-avatar">🌧️</div>
+<div>
+<div class="footer-name">이신우</div>
+<div class="footer-role">생성형AI활용 영상제작 교육전문가</div>
+</div>
+</div>
+<p style="color:var(--dim);font-size:.9rem;line-height:1.7">두온교육(주) 출판사 대표<br>미래이음연구소 소장<br>AI 관련 서적 16권 저자</p>
+</div>
+<div class="footer-col">
+<h4>연결</h4>
+<a href="https://github.com/mintorain/mintobot" target="_blank">📦 GitHub (mintobot)</a>
+<a href="https://github.com/mintorain" target="_blank">👤 GitHub (@mintorain)</a>
+<a href="https://youtube.com/@mintorain7" target="_blank">🎬 YouTube (챗GPT강사 미래이음연구소)</a>
+<a href="https://x.com/mintorain7" target="_blank">𝕏 Twitter (@mintorain7)</a>
+</div>
+<div class="footer-col">
+<h4>관련 사이트</h4>
+<a href="https://duon.myds.me" target="_blank">📚 두온교육 출판사</a>
+<a href="https://duon.myds.me/education" target="_blank">🎓 미래이음연구소</a>
+<a href="https://duon.myds.me:8443/demo" target="_blank">🤖 민토봇 데모</a>
+<a href="mailto:mintorain@gmail.com">✉️ mintorain@gmail.com</a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2025 MintoBot · <a href="https://github.com/mintorain/mintobot/blob/main/LICENSE">MIT License</a> · Built with ❤️ and AI</p>
+<p style="margin-top:8px"><a href="https://duon.myds.me" target="_blank">두온교육(주)</a> · <a href="https://duon.myds.me/education" target="_blank">미래이음연구소</a></p>
+</div>
+</div>
+</footer>
+
+<script>
+// Intersection Observer for fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+// Parallax orbs on mouse move
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  document.querySelectorAll('.orb').forEach((orb, i) => {
+    const speed = (i + 1) * 0.5;
+    orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+  });
+});
+
+// Typing effect for tagline
+const tagline = document.querySelector('.hero .tagline');
+if (tagline) {
+  const text = tagline.textContent;
+  tagline.textContent = '';
+  tagline.style.borderRight = '2px solid var(--glow-cyan)';
+  let i = 0;
+  const type = () => {
+    if (i < text.length) {
+      tagline.textContent += text[i];
+      i++;
+      setTimeout(type, 50);
+    } else {
+      setTimeout(() => { tagline.style.borderRight = 'none'; }, 1000);
+    }
+  };
+  setTimeout(type, 500);
+}
+
+// Counter animation for stats
+const animateCounters = () => {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const text = el.textContent;
+    const num = parseInt(text);
+    if (isNaN(num)) return;
+    const suffix = text.replace(num, '');
+    let current = 0;
+    const step = Math.ceil(num / 40);
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= num) {
+        current = num;
+        clearInterval(timer);
+      }
+      el.textContent = current + suffix;
+    }, 30);
+  });
+};
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounters(); heroObserver.unobserve(e.target); } });
+});
+heroObserver.observe(document.querySelector('.hero'));
+</script>
+</body>
+</html>
