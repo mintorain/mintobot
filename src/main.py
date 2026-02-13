@@ -43,25 +43,42 @@ async def lifespan(app: FastAPI):
     global agent, telegram_bot
 
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    gateway_url = os.getenv("OPENCLAW_GATEWAY_URL", "http://127.0.0.1:18789")
-    gateway_token = os.getenv("OPENCLAW_GATEWAY_TOKEN", "")
-    model = os.getenv("CLAUDE_MODEL", "openclaw:main")
+    api_mode = os.getenv("API_MODE", "gateway").lower()  # "gateway" or "direct"
+    model = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 
     if not bot_token:
         logger.error("TELEGRAM_BOT_TOKEN이 설정되지 않았습니다!")
         sys.exit(1)
-    if not gateway_token:
-        logger.error("OPENCLAW_GATEWAY_TOKEN이 설정되지 않았습니다!")
-        sys.exit(1)
 
-    # 에이전트 초기화 (OpenClaw Gateway 경유)
-    agent = AgentCore(
-        gateway_url=gateway_url,
-        gateway_token=gateway_token,
-        model=model,
-    )
-    await agent.init()
-    logger.info(f"🌧️ 민토봇 초기화 완료 (Gateway: {gateway_url}, 모델: {model})")
+    # 이중 모드 에이전트 초기화
+    if api_mode == "direct":
+        # 독립 실행 — Anthropic API 직접 호출
+        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            logger.error("ANTHROPIC_API_KEY가 설정되지 않았습니다!")
+            sys.exit(1)
+        agent = AgentCore(
+            api_mode="direct",
+            anthropic_api_key=api_key,
+            model=model,
+        )
+        await agent.init()
+        logger.info(f"🌧️ 민토봇 초기화 완료 (Direct API, 모델: {model})")
+    else:
+        # OpenClaw Gateway 경유
+        gateway_url = os.getenv("OPENCLAW_GATEWAY_URL", "http://127.0.0.1:18789")
+        gateway_token = os.getenv("OPENCLAW_GATEWAY_TOKEN", "")
+        if not gateway_token:
+            logger.error("OPENCLAW_GATEWAY_TOKEN이 설정되지 않았습니다!")
+            sys.exit(1)
+        agent = AgentCore(
+            api_mode="gateway",
+            gateway_url=gateway_url,
+            gateway_token=gateway_token,
+            model=model,
+        )
+        await agent.init()
+        logger.info(f"🌧️ 민토봇 초기화 완료 (Gateway: {gateway_url}, 모델: {model})")
 
     # Telegram 봇 시작
     telegram_bot = TelegramBot(token=bot_token, agent=agent)

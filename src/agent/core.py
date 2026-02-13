@@ -1,7 +1,12 @@
 from __future__ import annotations
 """
-에이전트 코어 — OpenClaw Gateway 경유 Claude API
-OpenAI 호환 엔드포인트를 통해 Claude 호출 + 도구 사용 루프
+에이전트 코어 — 이중 모드 지원
+1. OpenClaw Gateway 경유 (OpenAI 호환 엔드포인트)
+2. Anthropic API 직접 호출 (독립 실행)
+
+.env에서 API_MODE로 선택:
+  API_MODE=gateway  → OpenClaw Gateway 경유 (기본)
+  API_MODE=direct   → Anthropic API 직접 호출
 """
 import httpx
 import json
@@ -16,20 +21,29 @@ from src.agent.summarizer import ConversationSummarizer
 from src.tools.registry import ToolRegistry, create_default_registry
 from src.tools.memory_tools import set_ltm
 
-MAX_TOOL_ROUNDS = 5  # 도구 호출 최대 반복 횟수
+MAX_TOOL_ROUNDS = 5
 
 
 class AgentCore:
-    """민토봇 에이전트 코어 — OpenClaw Gateway 경유"""
+    """민토봇 에이전트 코어 — Gateway / Direct 이중 모드"""
 
     def __init__(
         self,
+        api_mode: str = "gateway",
+        # Gateway 모드
         gateway_url: str = "http://127.0.0.1:18789",
         gateway_token: str = "",
-        model: str = "openclaw:main",
+        # Direct 모드
+        anthropic_api_key: str = "",
+        anthropic_base_url: str = "https://api.anthropic.com",
+        # 공통
+        model: str = "claude-sonnet-4-20250514",
     ):
+        self.api_mode = api_mode  # "gateway" or "direct"
         self.gateway_url = gateway_url
         self.gateway_token = gateway_token
+        self.anthropic_api_key = anthropic_api_key
+        self.anthropic_base_url = anthropic_base_url
         self.model = model
         self.prompt_builder = PromptBuilder()
         self.mode_manager = ModeManager()
@@ -45,10 +59,9 @@ class AgentCore:
         self.memory = ConversationMemory()
         await self.memory.init()
 
-        # 장기 기억 + 요약기 초기화
         self.ltm = LongTermMemory()
         await self.ltm.init()
-        set_ltm(self.ltm)  # 메모리 도구에 LTM 인스턴스 주입
+        set_ltm(self.ltm)
 
         self.summarizer = ConversationSummarizer(
             self.ltm,
@@ -77,8 +90,17 @@ class AgentCore:
             self._histories[user_id] = []
         return self._histories[user_id]
 
+    # ── API 호출 (이중 모드) ─────────────────────────────
+
     async def _call_api(self, messages: list[dict], tools: list[dict] | None = None) -> dict:
-        """OpenClaw Gateway API 호출"""
+        """모드에 따라 Gateway 또는 Anthropic 직접 호출"""
+        if self.api_mode == "direct":
+            return await self._call_anthropic_direct(messages, tools)
+        else:
+            return await self._call_gateway(messages, tools)
+
+    async def _call_gateway(self, messages: list[dict], tools: list[dict] | None = None) -> dict:
+        """OpenClaw Gateway API 호출 (OpenAI 호환)"""
         payload = {
             "model": self.model,
             "messages": messages,
@@ -101,6 +123,128 @@ class AgentCore:
 
         return resp.json()
 
+    async def _call_anthropic_direct(self, messages: list[dict], tools: list[dict] | None = None) -> dict:
+        """Anthropic API 직접 호출 → OpenAI 호환 형식으로 변환"""
+        # system 메시지 분리
+        system_text = ""
+        chat_messages = []
+        for msg in messages:
+            if msg["role"] == "system":
+                system_text += msg["content"] + "\n"
+            else:
+                chat_messages.append(msg)
+
+        # Anthropic Messages API 형식으로 변환
+        anthropic_messages = []
+        for msg in chat_messages:
+            role = msg["role"]
+            if role == "tool":
+                # tool result → Anthropic 형식
+                anthropic_messages.append({
+                    "role": "user",
+                    "content": [{
+                        "type": "tool_result",
+                        "tool_use_id": msg.get("tool_call_id", ""),
+                        "content": msg.get("content", ""),
+                    }]
+                })
+            elif role == "assistant" and msg.get("tool_calls"):
+                # assistant with tool_calls → Anthropic 형식
+                content = []
+                if msg.get("content"):
+                    content.append({"type": "text", "text": msg["content"]})
+                for tc in msg["tool_calls"]:
+                    func = tc.get("function", {})
+                    content.append({
+                        "type": "tool_use",
+                        "id": tc["id"],
+                        "name": func.get("name", ""),
+                        "input": json.loads(func.get("arguments", "{}")) if isinstance(func.get("arguments"), str) else func.get("arguments", {}),
+                    })
+                anthropic_messages.append({"role": "assistant", "content": content})
+            else:
+                anthropic_messages.append({"role": role, "content": msg.get("content", "")})
+
+        # Anthropic tools 형식 변환
+        anthropic_tools = None
+        if tools:
+            anthropic_tools = []
+            for t in tools:
+                func = t.get("function", {})
+                anthropic_tools.append({
+                    "name": func.get("name", ""),
+                    "description": func.get("description", ""),
+                    "input_schema": func.get("parameters", {"type": "object", "properties": {}}),
+                })
+
+        payload = {
+            "model": self.model,
+            "messages": anthropic_messages,
+            "max_tokens": 4096,
+        }
+        if system_text.strip():
+            payload["system"] = system_text.strip()
+        if anthropic_tools:
+            payload["tools"] = anthropic_tools
+
+        resp = await self._http.post(
+            f"{self.anthropic_base_url}/v1/messages",
+            headers={
+                "x-api-key": self.anthropic_api_key,
+                "anthropic-version": "2023-06-01",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+        )
+
+        if resp.status_code != 200:
+            raise Exception(f"Anthropic API 에러 ({resp.status_code}): {resp.text}")
+
+        data = resp.json()
+
+        # Anthropic 응답 → OpenAI 호환 형식으로 변환
+        return self._convert_anthropic_to_openai(data)
+
+    def _convert_anthropic_to_openai(self, data: dict) -> dict:
+        """Anthropic Messages API 응답 → OpenAI chat completions 형식"""
+        content_blocks = data.get("content", [])
+        text_parts = []
+        tool_calls = []
+
+        for i, block in enumerate(content_blocks):
+            if block["type"] == "text":
+                text_parts.append(block["text"])
+            elif block["type"] == "tool_use":
+                tool_calls.append({
+                    "id": block["id"],
+                    "type": "function",
+                    "function": {
+                        "name": block["name"],
+                        "arguments": json.dumps(block.get("input", {}), ensure_ascii=False),
+                    }
+                })
+
+        message = {
+            "role": "assistant",
+            "content": "\n".join(text_parts) if text_parts else None,
+        }
+        if tool_calls:
+            message["tool_calls"] = tool_calls
+
+        stop_reason = data.get("stop_reason", "end_turn")
+        finish_reason = "tool_calls" if stop_reason == "tool_use" else "stop"
+
+        return {
+            "choices": [{
+                "index": 0,
+                "message": message,
+                "finish_reason": finish_reason,
+            }],
+            "usage": data.get("usage", {}),
+        }
+
+    # ── 도구 실행 ─────────────────────────────
+
     async def _execute_tool_call(self, tool_call: dict) -> str:
         """도구 호출 실행"""
         func = tool_call.get("function", {})
@@ -108,7 +252,7 @@ class AgentCore:
         args_str = func.get("arguments", "{}")
 
         try:
-            args = json.loads(args_str) if args_str else {}
+            args = json.loads(args_str) if isinstance(args_str, str) else args_str
         except json.JSONDecodeError:
             return f"❌ 인자 파싱 오류: {args_str}"
 
@@ -122,10 +266,10 @@ class AgentCore:
         except Exception as e:
             return f"❌ 도구 실행 오류 ({name}): {e}\n{traceback.format_exc()}"
 
+    # ── 메인 채팅 루프 ─────────────────────────────
+
     async def chat(self, user_id: str, message: str) -> str:
-        """
-        사용자 메시지 → OpenClaw Gateway → 도구 사용 루프 → 최종 응답
-        """
+        """사용자 메시지 → API 호출 → 도구 사용 루프 → 최종 응답"""
         # 모드 전환 감지
         new_mode = self.mode_manager.detect_mode(message)
         current_mode = self.mode_manager.get_mode(user_id)
@@ -148,10 +292,7 @@ class AgentCore:
             history = history[-50:]
             self._histories[user_id] = history
 
-        # OpenAI 호환 요청 구성
         messages = [{"role": "system", "content": system_prompt}] + history
-
-        # 도구 목록
         tools = self.tool_registry.to_openai_tools() if self.tool_registry else None
 
         # 도구 사용 루프
@@ -161,18 +302,14 @@ class AgentCore:
             choice = data["choices"][0]
             msg = choice["message"]
 
-            # tool_calls가 있으면 도구 실행
             tool_calls = msg.get("tool_calls")
             if not tool_calls:
-                # 도구 호출 없음 → 최종 응답
                 assistant_message = msg.get("content", "")
                 break
 
-            # assistant 메시지(tool_calls 포함)를 히스토리에 추가
             assistant_tool_msg = {"role": "assistant", "content": msg.get("content") or None, "tool_calls": tool_calls}
             messages.append(assistant_tool_msg)
 
-            # 각 도구 호출 실행
             for tc in tool_calls:
                 result = await self._execute_tool_call(tc)
                 tool_result_msg = {
@@ -182,18 +319,14 @@ class AgentCore:
                 }
                 messages.append(tool_result_msg)
         else:
-            # 최대 반복 도달 — 마지막 응답 사용
             assistant_message = assistant_message or "도구 호출 한도에 도달했습니다."
 
-        # 히스토리에 최종 응답 추가
         history.append({"role": "assistant", "content": assistant_message})
 
-        # DB에 저장
         if self.memory:
             await self.memory.save_message(user_id, "user", message)
             await self.memory.save_message(user_id, "assistant", assistant_message)
 
-        # 턴 카운트 → 요약 트리거
         if self.summarizer:
             self.summarizer.increment_turn(user_id)
             if self.summarizer.should_summarize(user_id):
