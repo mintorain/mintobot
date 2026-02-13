@@ -1,0 +1,70 @@
+/* 46판 (127mm × 188mm) */
+@page {
+  size: 127mm 188mm;
+  margin: 16mm 14mm 20mm 14mm;
+
+  @bottom-center {
+    content: counter(page);
+    font-size: 9pt;
+    color: #666;
+  }
+}
+
+body {
+  font-family: "Noto Serif CJK KR", "Batang", serif;
+  font-size: 10pt;
+  line-height: 1.8;
+  color: #222;
+  text-align: justify;
+  word-break: keep-all;
+}
+
+h1 {
+  font-size: 19pt;
+  text-align: center;
+  margin-top: 50mm;
+  margin-bottom: 16mm;
+  font-weight: 700;
+  page-break-after: always;
+}
+
+h2 {
+  font-size: 14pt;
+  margin-top: 25mm;
+  margin-bottom: 8mm;
+  font-weight: 600;
+  page-break-before: always;
+}
+
+h3 {
+  font-size: 12pt;
+  margin-top: 6mm;
+  margin-bottom: 4mm;
+}
+
+p {
+  text-indent: 1em;
+  margin: 0;
+  orphans: 2;
+  widows: 2;
+}
+
+blockquote {
+  margin: 4mm 5mm;
+  padding-left: 4mm;
+  border-left: 2px solid #ccc;
+  font-style: italic;
+  color: #555;
+}
+
+hr {
+  border: none;
+  text-align: center;
+  margin: 8mm 0;
+}
+
+hr::after {
+  content: "* * *";
+  color: #999;
+  font-size: 10pt;
+}

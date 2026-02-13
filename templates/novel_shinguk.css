@@ -1,0 +1,70 @@
+/* 신국판 (152mm × 225mm) 소설 스타일 */
+@page {
+  size: 152mm 225mm;
+  margin: 20mm 18mm 25mm 18mm;
+
+  @bottom-center {
+    content: counter(page);
+    font-size: 9pt;
+    color: #666;
+  }
+}
+
+body {
+  font-family: "Noto Serif CJK KR", "Batang", serif;
+  font-size: 11pt;
+  line-height: 1.8;
+  color: #222;
+  text-align: justify;
+  word-break: keep-all;
+}
+
+h1 {
+  font-size: 22pt;
+  text-align: center;
+  margin-top: 60mm;
+  margin-bottom: 20mm;
+  font-weight: 700;
+  page-break-after: always;
+}
+
+h2 {
+  font-size: 16pt;
+  margin-top: 30mm;
+  margin-bottom: 10mm;
+  font-weight: 600;
+  page-break-before: always;
+}
+
+h3 {
+  font-size: 13pt;
+  margin-top: 8mm;
+  margin-bottom: 4mm;
+}
+
+p {
+  text-indent: 1em;
+  margin: 0;
+  orphans: 2;
+  widows: 2;
+}
+
+blockquote {
+  margin: 4mm 6mm;
+  padding-left: 4mm;
+  border-left: 2px solid #ccc;
+  font-style: italic;
+  color: #555;
+}
+
+hr {
+  border: none;
+  text-align: center;
+  margin: 8mm 0;
+}
+
+hr::after {
+  content: "* * *";
+  color: #999;
+  font-size: 10pt;
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>민토봇 대시보드</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1b2e;--card:#242640;--card-hover:#2d2f52;--accent:#6c63ff;--accent2:#ff6b9d;--text:#e8e8f0;--text2:#9999b0;--green:#4ade80;--bar-bg:#3a3c5e;--border:#3a3c5e}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1000px;margin:0 auto;padding:24px 16px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+header h1{font-size:1.5rem;font-weight:700}
+header h1 span{color:var(--accent)}
+.back-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.back-btn:hover{border-color:var(--accent);color:var(--text)}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px}
+.stat-box{background:var(--card);border-radius:12px;padding:16px;text-align:center}
+.stat-box .val{font-size:1.6rem;font-weight:700;color:var(--accent)}
+.stat-box .label{font-size:.75rem;color:var(--text2);margin-top:4px}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.card:hover{background:var(--card-hover);border-color:var(--accent);transform:translateY(-2px)}
+.card .title{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+.card .meta{font-size:.8rem;color:var(--text2);margin-bottom:12px;display:flex;gap:12px}
+.card .meta span{display:flex;align-items:center;gap:4px}
+.progress-wrap{background:var(--bar-bg);border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px}
+.progress-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease}
+.progress-text{font-size:.75rem;color:var(--text2);display:flex;justify-content:space-between}
+.detail-section{margin-top:24px}
+.detail-section h2{font-size:1.1rem;margin-bottom:16px;color:var(--text)}
+.chapter-list{display:flex;flex-direction:column;gap:8px}
+.chapter-item{background:var(--card);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.chapter-item .ch-name{font-weight:500}
+.chapter-item .ch-chars{color:var(--accent);font-weight:600}
+.chapter-item .ch-date{font-size:.75rem;color:var(--text2)}
+.goal-section{margin-top:20px;background:var(--card);border-radius:12px;padding:20px}
+.goal-section h3{font-size:.95rem;margin-bottom:12px}
+.goal-input-row{display:flex;gap:10px;align-items:center}
+.goal-input-row input{background:var(--bar-bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:.9rem;width:140px}
+.goal-input-row button{background:var(--accent);border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem;transition:opacity .2s}
+.goal-input-row button:hover{opacity:.85}
+.empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.loading{text-align:center;padding:40px;color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="container" id="app">
+  <div class="loading">로딩 중...</div>
+</div>
+<script>
+(function(){
+  const app = document.getElementById('app');
+  const isDetail = /\/dashboard\/([^/]+)/.exec(location.pathname);
+
+  function fmt(n){ return n.toLocaleString('ko-KR') }
+  function fmtDate(d){ if(!d)return '-'; const dt=new Date(typeof d==='number'?d*1000:d); return dt.toLocaleDateString('ko-KR') }
+
+  async function loadList(){
+    const res = await fetch('/api/dashboard/projects');
+    const data = await res.json();
+    const projects = data.projects || [];
+
+    const totalChars = projects.reduce((s,p)=>s+p.total_chars,0);
+    const totalChapters = projects.reduce((s,p)=>s+p.chapter_count,0);
+    const avgProgress = projects.length ? Math.round(projects.reduce((s,p)=>s+p.progress,0)/projects.length) : 0;
+
+    app.innerHTML = `
+      <header><h1>🌧️ <span>민토봇</span> 대시보드</h1></header>
+      <div class="stats-row">
+        <div class="stat-box"><div class="val">${projects.length}</div><div class="label">프로젝트</div></div>
+        <div class="stat-box"><div class="val">${fmt(totalChars)}</div><div class="label">총 글자수</div></div>
+        <div class="stat-box"><div class="val">${totalChapters}</div><div class="label">총 챕터</div></div>
+        <div class="stat-box"><div class="val">${avgProgress}%</div><div class="label">평균 진행률</div></div>
+      </div>
+      ${projects.length === 0 ? '<div class="empty">아직 프로젝트가 없습니다</div>' :
+        '<div class="projects-grid">' + projects.map(p => `
+          <div class="card" onclick="location.href='/dashboard/${p.id}'">
+            <div class="title">${esc(p.title)}</div>
+            <div class="meta">
+              <span>${esc(p.genre||p.type||'')}</span>
+              <span>${p.chapter_count}개 챕터</span>
+              <span>${p.status||'draft'}</span>
+            </div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:${p.progress}%"></div></div>
+            <div class="progress-text"><span>${fmt(p.total_chars)}자</span><span>${p.progress}% / ${fmt(p.goal)}자</span></div>
+          </div>
+        `).join('') + '</div>'}`;
+  }
+
+  async function loadDetail(pid){
+    const res = await fetch('/api/dashboard/projects/'+pid+'/stats');
+    const p = await res.json();
+    if(p.error){ app.innerHTML='<div class="empty">프로젝트를 찾을 수 없습니다</div>'; return; }
+
+    app.innerHTML = `
+      <header>
+        <h1>🌧️ <span>${esc(p.title)}</span></h1>
+        <button class="back-btn" onclick="location.href='/dashboard'">← 목록으로</button>
+      </header>
+      <div class="stats-row">
+        <div class="stat-box"><div class="val">${fmt(p.total_chars)}</div><div class="label">총 글자수</div></div>
+        <div class="stat-box"><div class="val">${p.chapter_count}</div><div class="label">챕터 수</div></div>
+        <div class="stat-box"><div class="val">${p.progress}%</div><div class="label">진행률</div></div>
+        <div class="stat-box"><div class="val">${fmt(p.goal)}</div><div class="label">목표 글자수</div></div>
+      </div>
+      <div class="progress-wrap" style="height:12px;margin-bottom:20px"><div class="progress-bar" style="width:${p.progress}%"></div></div>
+      <div class="goal-section">
+        <h3>📝 글자수 목표 설정</h3>
+        <div class="goal-input-row">
+          <input type="number" id="goalInput" value="${p.goal}" min="1000" step="1000">
+          <span style="color:var(--text2);font-size:.85rem">자</span>
+          <button onclick="setGoal('${p.id}')">저장</button>
+        </div>
+      </div>
+      ${p.chapters && p.chapters.length > 0 ? `
+        <div class="detail-section">
+          <h2>📖 챕터별 상세</h2>
+          <div class="chapter-list">
+            ${p.chapters.map(ch => `
+              <div class="chapter-item">
+                <div><div class="ch-name">${esc(ch.name)}</div><div class="ch-date">${fmtDate(ch.modified)}</div></div>
+                <div class="ch-chars">${fmt(ch.chars)}자</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>` : '<div class="detail-section"><div class="empty" style="padding:30px">아직 챕터가 없습니다</div></div>'}`;
+  }
+
+  window.setGoal = async function(pid){
+    const goal = parseInt(document.getElementById('goalInput').value);
+    if(!goal||goal<1) return;
+    await fetch('/api/dashboard/projects/'+pid+'/goal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({goal})});
+    loadDetail(pid);
+  };
+
+  function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+
+  if(isDetail){ loadDetail(isDetail[1]); } else { loadList(); }
+})();
+</script>
+</body>
+</html>

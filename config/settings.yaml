@@ -1,0 +1,15 @@
+# 민토봇 설정
+bot:
+  name: "민토봇"
+  version: "0.1.0"
+
+claude:
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 4096
+
+telegram:
+  polling: true
+
+server:
+  host: "0.0.0.0"
+  port: 8080

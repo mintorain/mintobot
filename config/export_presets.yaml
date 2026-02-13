@@ -1,0 +1,38 @@
+# 내보내기 프리셋 설정
+presets:
+  draft:
+    format: pdf
+    watermark: true
+    description: "초안 검토용"
+
+  kindle:
+    format: epub
+    description: "Kindle 업로드용"
+
+  print:
+    format: pdf
+    paper: shinguk
+    description: "인쇄용 신국판 (152×225mm)"
+
+  print_46pan:
+    format: pdf
+    paper: 46pan
+    description: "인쇄용 46판 (127×188mm)"
+
+  print_46bae:
+    format: pdf
+    paper: 46bae
+    description: "인쇄용 46배판 (188×257mm)"
+
+  print_a5:
+    format: pdf
+    paper: a5
+    description: "인쇄용 A5판 (148×210mm)"
+
+  publisher:
+    format: docx
+    description: "출판사 제출용"
+
+  blog:
+    format: html
+    description: "블로그 포스팅용"

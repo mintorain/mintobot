@@ -1,0 +1,275 @@
+/* 두온교육 AI 채팅 위젯 — Reference Clone */
+#duon-chat-widget {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  z-index: 99999;
+}
+#duon-chat-widget * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* 플로팅 버튼 — 파란 원형, 말풍선 아이콘 */
+.duon-chat-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #5b8def;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(91, 141, 239, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.25s ease;
+  z-index: 99999;
+}
+.duon-chat-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(91, 141, 239, 0.5);
+}
+.duon-chat-btn.active {
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 채팅창 — 흰 배경, 둥근 모서리, 그림자 */
+.duon-chat-window {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  width: 380px;
+  height: 560px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 99999;
+}
+.duon-chat-window.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* 헤더 — 딥 네이비, 컴팩트 */
+.duon-chat-header {
+  background: #1b3a5c;
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.duon-chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.duon-chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.duon-chat-header-info {}
+.duon-chat-header-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.duon-chat-header-subtitle {
+  display: none;
+}
+.duon-chat-header-actions {
+  display: flex;
+  gap: 8px;
+}
+.duon-chat-close, .duon-chat-refresh {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.duon-chat-close:hover, .duon-chat-refresh:hover {
+  color: #fff;
+}
+
+/* 메시지 영역 — 흰 배경 */
+.duon-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fff;
+}
+.duon-chat-messages::-webkit-scrollbar { width: 0; }
+
+/* 메시지 버블 */
+.duon-msg {
+  max-width: 85%;
+  padding: 14px 18px;
+  word-break: break-word;
+  font-size: 14px;
+  line-height: 1.65;
+  animation: duon-fade 0.2s ease;
+}
+.duon-msg-ai {
+  align-self: flex-start;
+  background: #f4f4f4;
+  color: #333;
+  border-radius: 4px 18px 18px 18px;
+}
+.duon-msg-user {
+  align-self: flex-end;
+  background: #1b3a5c;
+  color: #fff;
+  border-radius: 18px 4px 18px 18px;
+}
+
+/* 타이핑 */
+.duon-typing {
+  align-self: flex-start;
+  background: #f4f4f4;
+  padding: 14px 20px;
+  border-radius: 4px 18px 18px 18px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.duon-typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #bbb;
+  animation: duon-bounce 0.6s infinite alternate;
+}
+.duon-typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.duon-typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* 퀵 액션 — 하단, 테두리 있는 둥근 버튼 */
+.duon-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 20px 16px;
+  background: #fff;
+}
+.duon-quick-btn {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.duon-quick-btn:hover {
+  background: #1b3a5c;
+  color: #fff;
+  border-color: #1b3a5c;
+}
+
+/* 입력 영역 — 연한 파란 배경 */
+.duon-chat-input-area {
+  display: flex;
+  padding: 14px 16px 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  background: #eaf1fb;
+  align-items: center;
+}
+.duon-chat-input {
+  flex: 1;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 18px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  background: #fff;
+  color: #333;
+}
+.duon-chat-input::placeholder { color: #aaa; }
+.duon-chat-input:focus {
+  box-shadow: 0 0 0 2px rgba(91, 141, 239, 0.2);
+}
+.duon-chat-send {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #5b8def;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(91, 141, 239, 0.3);
+}
+.duon-chat-send:hover {
+  background: #4a7de0;
+}
+.duon-chat-send:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 푸터 숨김 */
+.duon-chat-footer {
+  display: none;
+}
+
+/* 애니메이션 */
+@keyframes duon-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes duon-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+/* 모바일 */
+@media (max-width: 480px) {
+  .duon-chat-window {
+    bottom: 0; right: 0;
+    width: 100%; height: 100%;
+    border-radius: 0;
+  }
+  .duon-chat-btn {
+    bottom: 16px; right: 16px;
+    width: 50px; height: 50px; font-size: 20px;
+  }
+}

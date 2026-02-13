@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mintobot": {
+      "command": "python3",
+      "args": ["src/mcp_server.py"],
+      "cwd": "/Users/mintorain/.openclaw/workspace/projects/mintobot"
+    }
+  }
+}

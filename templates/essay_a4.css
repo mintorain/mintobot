@@ -1,0 +1,54 @@
+/* A4 에세이 스타일 */
+@page {
+  size: A4;
+  margin: 25mm 20mm 30mm 20mm;
+
+  @bottom-center {
+    content: counter(page);
+    font-size: 9pt;
+    color: #888;
+  }
+}
+
+body {
+  font-family: "Noto Sans CJK KR", "Apple SD Gothic Neo", sans-serif;
+  font-size: 11pt;
+  line-height: 1.9;
+  color: #333;
+  word-break: keep-all;
+}
+
+h1 {
+  font-size: 24pt;
+  text-align: center;
+  margin-top: 40mm;
+  margin-bottom: 15mm;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 16pt;
+  margin-top: 12mm;
+  margin-bottom: 5mm;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 2mm;
+}
+
+h3 {
+  font-size: 13pt;
+  margin-top: 8mm;
+  margin-bottom: 3mm;
+}
+
+p {
+  text-indent: 1em;
+  margin: 0 0 2mm 0;
+}
+
+blockquote {
+  margin: 5mm 8mm;
+  padding: 3mm 5mm;
+  background: #f7f7f7;
+  border-left: 3px solid #4a90d9;
+  font-size: 10pt;
+}
