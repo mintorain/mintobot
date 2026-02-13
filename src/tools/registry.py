@@ -51,6 +51,8 @@ def create_default_registry() -> ToolRegistry:
     from src.tools.manuscript_tools import ALL_MANUSCRIPT_TOOLS
     from src.tools.business_tools import ALL_BUSINESS_TOOLS
     from src.tools.marketing_tools import ALL_MARKETING_TOOLS
+    from src.tools.gmail_tools import ALL_GMAIL_TOOLS
+    from src.tools.tts_tools import ALL_TTS_TOOLS
 
     registry = ToolRegistry()
     registry.register(DateTimeTool())
@@ -128,6 +130,14 @@ def create_default_registry() -> ToolRegistry:
 
     # EPUB 검증 도구 등록
     for tool_cls in ALL_EPUB_TOOLS:
+        registry.register(tool_cls())
+
+    # Gmail 도구 등록
+    for tool_cls in ALL_GMAIL_TOOLS:
+        registry.register(tool_cls())
+
+    # TTS 낭독 도구 등록
+    for tool_cls in ALL_TTS_TOOLS:
         registry.register(tool_cls())
 
     return registry

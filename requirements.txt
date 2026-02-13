@@ -33,3 +33,6 @@ Jinja2>=3.1
 
 # MCP
 fastmcp>=0.4
+
+# TTS
+gTTS>=2.5
