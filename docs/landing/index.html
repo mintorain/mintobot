@@ -121,6 +121,14 @@ nav.scrolled{background:var(--nav-bg);backdrop-filter:var(--blur-sm);-webkit-bac
 .theme-toggle{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-mid);width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:8px}
 .theme-toggle:hover{border-color:var(--border-hover);color:var(--text-heading)}
 
+/* ===== LANGUAGE SWITCHER ===== */
+.lang-switcher{display:flex;gap:2px;padding:2px;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;margin-right:8px}
+.lang-btn{padding:6px 12px;border:none;background:none;color:var(--text-dim);font-size:.85rem;font-weight:600;cursor:pointer;border-radius:8px;transition:all .2s;font-family:inherit;text-decoration:none;display:flex;align-items:center}
+.lang-btn:hover{color:var(--text-heading);background:var(--bg-surface-strong)}
+.lang-btn.active{background:var(--gradient);color:#fff}
+.mobile-lang-switcher{display:flex;gap:4px;margin-top:12px}
+.mobile-lang-switcher .lang-btn{padding:8px 16px;font-size:1rem}
+
 /* Mobile hamburger */
 .nav-hamburger{display:none;background:none;border:none;color:var(--text-mid);font-size:1.5rem;cursor:pointer;padding:8px}
 .mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--nav-bg);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:16px}
@@ -241,7 +249,8 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
   body{font-size:16px}
   section{padding:80px 0}
   .container{padding:0 20px}
-  .nav-right a:not(.theme-toggle){display:none}
+  .nav-right a.nav-link{display:none}
+  .lang-switcher{display:none}
   .nav-hamburger{display:block}
   .hero{padding-top:60px}
   .hero h1{font-size:clamp(2.8rem,12vw,4rem)}
@@ -285,11 +294,12 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
-  <a href="#features" onclick="document.getElementById('mobileMenu').classList.remove('open')">기능</a>
-  <a href="#tools" onclick="document.getElementById('mobileMenu').classList.remove('open')">도구</a>
-  <a href="#install" onclick="document.getElementById('mobileMenu').classList.remove('open')">설치</a>
-  <a href="https://duon.myds.me:8443/demo">데모</a>
-  <a href="https://github.com/mintorain/mintobot">GitHub</a>
+  <a href="#features" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">기능</a>
+  <a href="#tools" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">도구</a>
+  <a href="#install" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">설치</a>
+  <a href="https://duon.myds.me:8443/demo" class="mobile-nav-link">데모</a>
+  <a href="https://github.com/mintorain/mintobot" class="mobile-nav-link">GitHub</a>
+  <div class="mobile-lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
 </div>
 
 <!-- Nav -->
@@ -297,11 +307,12 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <div class="nav-inner">
   <a href="#" class="nav-logo"><span>🌧️</span> 민토봇</a>
   <div class="nav-right">
-    <a href="#features">기능</a>
-    <a href="#tools">도구</a>
-    <a href="#install">설치</a>
-    <a href="https://duon.myds.me:8443/demo">데모</a>
-    <a href="https://github.com/mintorain/mintobot">GitHub</a>
+    <a href="#features" class="nav-link">기능</a>
+    <a href="#tools" class="nav-link">도구</a>
+    <a href="#install" class="nav-link">설치</a>
+    <a href="https://duon.myds.me:8443/demo" class="nav-link">데모</a>
+    <a href="https://github.com/mintorain/mintobot" class="nav-link">GitHub</a>
+    <div class="lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
     <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
     <button class="nav-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="메뉴">☰</button>
   </div>
