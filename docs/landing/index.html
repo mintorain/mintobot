@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>민토봇 — AI 출판 챗봇</title>
-<meta name="description" content="소설/에세이 창작부터 출판까지, 83개 AI 도구가 내장된 오픈소스 출판 챗봇">
+<meta name="description" content="소설/에세이 창작부터 출판까지, 77개 AI 도구가 내장된 오픈소스 출판 챗봇">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -116,32 +116,24 @@ nav.scrolled{background:var(--nav-bg);backdrop-filter:var(--blur-sm);-webkit-bac
 .nav-logo{font-size:1.3rem;font-weight:800;color:var(--text-heading);display:flex;align-items:center;gap:8px}
 .nav-logo span{font-size:1.4rem}
 .nav-right{display:flex;align-items:center;gap:6px}
-.nav-right a.nav-link{color:var(--text-mid);font-size:1.05rem;font-weight:500;padding:10px 18px;border-radius:12px;transition:all .2s}
-.nav-right a.nav-link:hover{color:var(--text-heading);background:var(--bg-surface)}
+.nav-right a{color:var(--text-mid);font-size:1.05rem;font-weight:500;padding:10px 18px;border-radius:12px;transition:all .2s}
+.nav-right a:hover{color:var(--text-heading);background:var(--bg-surface)}
 .theme-toggle{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-mid);width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:8px}
 .theme-toggle:hover{border-color:var(--border-hover);color:var(--text-heading)}
-
-
-/* ===== LANGUAGE SWITCHER ===== */
-.lang-switcher{display:flex;gap:2px;padding:2px;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;margin-right:8px}
-.lang-btn{padding:6px 12px;border:none;background:none;color:var(--text-dim);font-size:.85rem;font-weight:600;cursor:pointer;border-radius:8px;transition:all .2s;font-family:inherit;text-decoration:none;display:flex;align-items:center}
-.lang-btn:hover{color:var(--text-heading);background:var(--bg-surface-strong)}
-.lang-btn.active{background:var(--gradient);color:#fff}
-.mobile-lang-switcher{display:flex;gap:4px;margin-top:12px}
-.mobile-lang-switcher .lang-btn{padding:8px 16px;font-size:1rem}
-
 
 /* Mobile hamburger */
 .nav-hamburger{display:none;background:none;border:none;color:var(--text-mid);font-size:1.5rem;cursor:pointer;padding:8px}
 .mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--nav-bg);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .mobile-menu.open{display:flex}
-.mobile-menu a.mobile-nav-link{font-size:1.4rem;font-weight:600;color:var(--text);padding:14px 32px;border-radius:14px;transition:all .2s}
-.mobile-menu a.mobile-nav-link:hover{background:var(--bg-surface)}
+.mobile-menu a{font-size:1.4rem;font-weight:600;color:var(--text);padding:14px 32px;border-radius:14px;transition:all .2s}
+.mobile-menu a:hover{background:var(--bg-surface)}
 .mobile-menu-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--text-mid);font-size:1.6rem;cursor:pointer}
 
-/* ===== HERO ===== */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding-top:80px}
-.hero-inner{position:relative;z-index:1;max-width:800px}
+/* ===== NEON TUBES HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding-top:80px;overflow:hidden}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;touch-action:none}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,var(--bg) 85%);z-index:1;pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:800px}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:1rem;font-weight:500;color:var(--text-mid);padding:10px 22px;background:var(--bg-surface);backdrop-filter:var(--blur-sm);-webkit-backdrop-filter:var(--blur-sm);border:1px solid var(--border);border-radius:100px;margin-bottom:36px}
 .hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-3);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -249,8 +241,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
   body{font-size:16px}
   section{padding:80px 0}
   .container{padding:0 20px}
-  .nav-right a.nav-link{display:none}
-  .lang-switcher{display:none}
+  .nav-right a:not(.theme-toggle){display:none}
   .nav-hamburger{display:block}
   .hero{padding-top:60px}
   .hero h1{font-size:clamp(2.8rem,12vw,4rem)}
@@ -294,12 +285,11 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
-  <a href="#features" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">기능</a>
-  <a href="#tools" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">도구</a>
-  <a href="#install" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">설치</a>
-  <a href="https://duon.myds.me:8443/demo" class="mobile-nav-link">데모</a>
-  <a href="https://github.com/mintorain/mintobot" class="mobile-nav-link">GitHub</a>
-  <div class="mobile-lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
+  <a href="#features" onclick="document.getElementById('mobileMenu').classList.remove('open')">기능</a>
+  <a href="#tools" onclick="document.getElementById('mobileMenu').classList.remove('open')">도구</a>
+  <a href="#install" onclick="document.getElementById('mobileMenu').classList.remove('open')">설치</a>
+  <a href="https://duon.myds.me:8443/demo">데모</a>
+  <a href="https://github.com/mintorain/mintobot">GitHub</a>
 </div>
 
 <!-- Nav -->
@@ -307,12 +297,11 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <div class="nav-inner">
   <a href="#" class="nav-logo"><span>🌧️</span> 민토봇</a>
   <div class="nav-right">
-    <a href="#features" class="nav-link">기능</a>
-    <a href="#tools" class="nav-link">도구</a>
-    <a href="#install" class="nav-link">설치</a>
-    <a href="https://duon.myds.me:8443/demo" class="nav-link">데모</a>
-    <a href="https://github.com/mintorain/mintobot" class="nav-link">GitHub</a>
-    <div class="lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
+    <a href="#features">기능</a>
+    <a href="#tools">도구</a>
+    <a href="#install">설치</a>
+    <a href="https://duon.myds.me:8443/demo">데모</a>
+    <a href="https://github.com/mintorain/mintobot">GitHub</a>
     <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
     <button class="nav-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="메뉴">☰</button>
   </div>
@@ -320,16 +309,18 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 </nav>
 
 <!-- Hero -->
-<section class="hero">
+<section class="hero" id="heroSection">
+<canvas class="hero-canvas" id="heroCanvas"></canvas>
+<div class="hero-overlay"></div>
 <div class="hero-inner reveal">
   <div class="hero-badge"><span class="dot"></span> 오픈소스 · MIT 라이선스</div>
   <h1><em>민토봇</em></h1>
   <p class="subtitle">
     <strong>소설·에세이 창작</strong>부터 <strong>PDF 출판</strong>까지<br>
-    83개 AI 도구로 당신의 이야기를 책으로 만듭니다
+    77개 AI 도구로 당신의 이야기를 책으로 만듭니다
   </p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="num">83</div><div class="label">AI 도구</div></div>
+    <div class="hero-stat"><div class="num">77</div><div class="label">AI 도구</div></div>
     <div class="hero-stat"><div class="num">8</div><div class="label">판형</div></div>
     <div class="hero-stat"><div class="num">5분</div><div class="label">설치</div></div>
   </div>
@@ -379,7 +370,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <div class="container">
   <div class="section-header reveal">
     <div class="section-label">🧰 Tools</div>
-    <h2><em>83개</em> AI 도구</h2>
+    <h2><em>77개</em> AI 도구</h2>
     <p>출판에 필요한 모든 것이 내장되어 있습니다</p>
   </div>
   <div class="tools-accordion glass-strong reveal">
@@ -406,8 +397,6 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
         <div class="tool-cat"><h4>🌐 번역 (2)</h4><p>번역, 용어집 관리</p></div>
         <div class="tool-cat"><h4>📱 EPUB (2)</h4><p>구조 검증, 메타데이터</p></div>
         <div class="tool-cat"><h4>🖥 웹 (3)</h4><p>미리보기, 대시보드, 통계</p></div>
-        <div class="tool-cat"><h4>📧 Gmail (4)</h4><p>목록, 읽기, 검색, 요약</p></div>
-        <div class="tool-cat"><h4>🔊 TTS (2)</h4><p>텍스트 낭독, 챕터 낭독</p></div>
       </div>
     </div>
   </div>
@@ -517,7 +506,7 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
       <h4>Sites</h4>
       <a href="https://duon.myds.me" target="_blank">두온교육 출판사</a>
       <a href="https://duon.myds.me/education" target="_blank">미래이음연구소</a>
-      <a href="https://duon.myds.me:8443/demo" target="_blank">MintoBot Demo</a>
+      <a href="https://duon.myds.me:8443/demo" target="_blank">민토봇 데모</a>
       <a href="mailto:mintorain@gmail.com">mintorain@gmail.com</a>
     </div>
   </div>
@@ -526,6 +515,34 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
   </div>
 </div>
 </footer>
+
+<script type="module">
+// Neon Tubes Background
+(async () => {
+  try {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
+    const TubesCursor = module.default;
+    const app = TubesCursor(canvas, {
+      tubes: {
+        colors: ["#7c5cfc", "#50a0ff", "#c084fc"],
+        lights: {
+          intensity: 200,
+          colors: ["#7c5cfc", "#50a0ff", "#4ade80", "#c084fc"]
+        }
+      }
+    });
+    // Click to randomize colors
+    document.getElementById('heroSection').addEventListener('click', (e) => {
+      if (e.target.closest('a, button')) return; // don't randomize on button clicks
+      const rc = (n) => Array.from({length:n}, () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'));
+      app.tubes.setColors(rc(3));
+      app.tubes.setLightsColors(rc(4));
+    });
+  } catch(err) { console.warn('Neon tubes failed to load:', err); }
+})();
+</script>
 
 <script>
 // Theme toggle
