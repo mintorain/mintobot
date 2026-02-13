@@ -45,6 +45,12 @@ def create_default_registry() -> ToolRegistry:
     from src.tools.isbn_tools import ALL_ISBN_TOOLS
     from src.tools.proofread_tools import ALL_PROOFREAD_TOOLS
     from src.tools.dashboard_tools import ALL_DASHBOARD_TOOLS
+    from src.tools.market_tools import ALL_MARKET_TOOLS
+    from src.tools.translation_tools import ALL_TRANSLATION_TOOLS
+    from src.tools.epub_tools import ALL_EPUB_TOOLS
+    from src.tools.manuscript_tools import ALL_MANUSCRIPT_TOOLS
+    from src.tools.business_tools import ALL_BUSINESS_TOOLS
+    from src.tools.marketing_tools import ALL_MARKETING_TOOLS
 
     registry = ToolRegistry()
     registry.register(DateTimeTool())
@@ -98,6 +104,30 @@ def create_default_registry() -> ToolRegistry:
 
     # 대시보드 도구 등록
     for tool_cls in ALL_DASHBOARD_TOOLS:
+        registry.register(tool_cls())
+
+    # 마케팅 도구 등록
+    for tool_cls in ALL_MARKETING_TOOLS:
+        registry.register(tool_cls())
+
+    # 출판 비즈니스 도구 등록
+    for tool_cls in ALL_BUSINESS_TOOLS:
+        registry.register(tool_cls())
+
+    # 원고 분석 도구 등록
+    for tool_cls in ALL_MANUSCRIPT_TOOLS:
+        registry.register(tool_cls())
+
+    # 시장 분석 도구 등록
+    for tool_cls in ALL_MARKET_TOOLS:
+        registry.register(tool_cls())
+
+    # 번역 도구 등록
+    for tool_cls in ALL_TRANSLATION_TOOLS:
+        registry.register(tool_cls())
+
+    # EPUB 검증 도구 등록
+    for tool_cls in ALL_EPUB_TOOLS:
         registry.register(tool_cls())
 
     return registry
