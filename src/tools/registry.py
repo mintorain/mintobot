@@ -53,6 +53,7 @@ def create_default_registry() -> ToolRegistry:
     from src.tools.marketing_tools import ALL_MARKETING_TOOLS
     from src.tools.gmail_tools import ALL_GMAIL_TOOLS
     from src.tools.tts_tools import ALL_TTS_TOOLS
+    from src.tools.illustration_tools import ALL_ILLUSTRATION_TOOLS
 
     registry = ToolRegistry()
     registry.register(DateTimeTool())
@@ -138,6 +139,10 @@ def create_default_registry() -> ToolRegistry:
 
     # TTS 낭독 도구 등록
     for tool_cls in ALL_TTS_TOOLS:
+        registry.register(tool_cls())
+
+    # AI 삽화 생성 도구 등록
+    for tool_cls in ALL_ILLUSTRATION_TOOLS:
         registry.register(tool_cls())
 
     return registry
