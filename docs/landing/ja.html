@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ja" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>민토봇 — AI 출판 챗봇</title>
-<meta name="description" content="소설/에세이 창작부터 출판까지, 77개 AI 도구가 내장된 오픈소스 출판 챗봇">
+<title>MintoBot — AI出版チャットボット</title>
+<meta name="description" content="小説・エッセイの創作から出版まで、77個のAIツールを内蔵したオープンソース出版チャットボット">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
@@ -73,7 +73,7 @@
 }
 
 html{scroll-behavior:smooth}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;font-size:18px;transition:background .4s,color .4s}
+body{font-family:'Inter','Noto Sans JP',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;font-size:18px;transition:background .4s,color .4s}
 a{color:var(--accent-2);text-decoration:none;transition:all .2s}
 a:hover{color:var(--text-heading)}
 ::selection{background:var(--selection)}
@@ -294,27 +294,27 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
-  <a href="#features" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">기능</a>
-  <a href="#tools" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">도구</a>
-  <a href="#install" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">설치</a>
-  <a href="https://duon.myds.me:8443/demo" class="mobile-nav-link">데모</a>
+  <a href="#features" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">機能</a>
+  <a href="#tools" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">ツール</a>
+  <a href="#install" class="mobile-nav-link" onclick="document.getElementById('mobileMenu').classList.remove('open')">インストール</a>
+  <a href="https://duon.myds.me:8443/demo" class="mobile-nav-link">デモ</a>
   <a href="https://github.com/mintorain/mintobot" class="mobile-nav-link">GitHub</a>
-  <div class="mobile-lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
+  <div class="mobile-lang-switcher"><a href="index.html" class="lang-btn">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn active">JA</a></div>
 </div>
 
 <!-- Nav -->
 <nav id="nav">
 <div class="nav-inner">
-  <a href="#" class="nav-logo"><span>🌧️</span> 민토봇</a>
+  <a href="#" class="nav-logo"><span>🌧️</span> MintoBot</a>
   <div class="nav-right">
-    <a href="#features" class="nav-link">기능</a>
-    <a href="#tools" class="nav-link">도구</a>
-    <a href="#install" class="nav-link">설치</a>
-    <a href="https://duon.myds.me:8443/demo" class="nav-link">데모</a>
+    <a href="#features" class="nav-link">機能</a>
+    <a href="#tools" class="nav-link">ツール</a>
+    <a href="#install" class="nav-link">インストール</a>
+    <a href="https://duon.myds.me:8443/demo" class="nav-link">デモ</a>
     <a href="https://github.com/mintorain/mintobot" class="nav-link">GitHub</a>
-    <div class="lang-switcher"><a href="index.html" class="lang-btn active">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn">JA</a></div>
-    <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
-    <button class="nav-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="메뉴">☰</button>
+    <div class="lang-switcher"><a href="index.html" class="lang-btn">KO</a><a href="en.html" class="lang-btn">EN</a><a href="zh.html" class="lang-btn">ZH</a><a href="ja.html" class="lang-btn active">JA</a></div>
+    <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">🌙</button>
+    <button class="nav-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="メニュー">☰</button>
   </div>
 </div>
 </nav>
@@ -322,20 +322,20 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <!-- Hero -->
 <section class="hero">
 <div class="hero-inner reveal">
-  <div class="hero-badge"><span class="dot"></span> 오픈소스 · MIT 라이선스</div>
-  <h1><em>민토봇</em></h1>
+  <div class="hero-badge"><span class="dot"></span> オープンソース · MITライセンス</div>
+  <h1><em>MintoBot</em></h1>
   <p class="subtitle">
-    <strong>소설·에세이 창작</strong>부터 <strong>PDF 출판</strong>까지<br>
-    77개 AI 도구로 당신의 이야기를 책으로 만듭니다
+    <strong>小説・エッセイの創作</strong>から<strong>PDF出版</strong>まで<br>
+    77個のAIツールであなたの物語を本にします
   </p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="num">77</div><div class="label">AI 도구</div></div>
-    <div class="hero-stat"><div class="num">8</div><div class="label">판형</div></div>
-    <div class="hero-stat"><div class="num">5분</div><div class="label">설치</div></div>
+    <div class="hero-stat"><div class="num">77</div><div class="label">AIツール</div></div>
+    <div class="hero-stat"><div class="num">8</div><div class="label">判型</div></div>
+    <div class="hero-stat"><div class="num">5分</div><div class="label">セットアップ</div></div>
   </div>
   <div class="cta-row">
-    <a href="https://github.com/mintorain/mintobot" class="btn btn-glow">GitHub에서 시작하기 →</a>
-    <a href="https://duon.myds.me:8443/demo" class="btn btn-ghost">💬 데모 체험</a>
+    <a href="https://github.com/mintorain/mintobot" class="btn btn-glow">GitHubで始める →</a>
+    <a href="https://duon.myds.me:8443/demo" class="btn btn-ghost">💬 デモを体験</a>
   </div>
 </div>
 </section>
@@ -344,17 +344,17 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section id="features">
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">✦ Features</div>
-    <h2>출판의 <em>모든 과정</em>을 AI가</h2>
-    <p>집필부터 마케팅까지, 한 곳에서 해결하세요</p>
+    <div class="section-label">✦ 機能</div>
+    <h2>出版の<em>すべての工程</em>をAIが</h2>
+    <p>執筆からマーケティングまで、一箇所で解決</p>
   </div>
   <div class="features-grid">
-    <div class="feature-card glass reveal reveal-d1"><span class="feature-icon">✍️</span><h3>창작 지원</h3><p>프로젝트 관리, 캐릭터 설정, 세계관 구축. 5개 항목으로 AI가 피드백합니다.</p></div>
-    <div class="feature-card glass reveal reveal-d2"><span class="feature-icon">📝</span><h3>교정 · 퇴고</h3><p>20+개 맞춤법 규칙, 문체 일관성 분석, 중복 표현 탐지로 원고를 다듬습니다.</p></div>
-    <div class="feature-card glass reveal reveal-d3"><span class="feature-icon">📦</span><h3>출판 변환</h3><p>PDF·EPUB·DOCX·HTML 변환, 신국판·46판·A5 등 8종 판형, 표지 자동 생성.</p></div>
-    <div class="feature-card glass reveal reveal-d1"><span class="feature-icon">💰</span><h3>비즈니스</h3><p>인세 계산, 제작비 견적, 출판 일정, 손익분기점. 데이터로 의사결정하세요.</p></div>
-    <div class="feature-card glass reveal reveal-d2"><span class="feature-icon">📣</span><h3>마케팅</h3><p>교보/YES24 소개글, 띠지 문구, SNS 홍보문 자동 생성. 독자 타겟 분석.</p></div>
-    <div class="feature-card glass reveal reveal-d3"><span class="feature-icon">🔍</span><h3>분석 · 검증</h3><p>원고 통계, 유사 도서 검색, 다국어 번역, EPUB 검증으로 출간 전 점검.</p></div>
+    <div class="feature-card glass reveal reveal-d1"><span class="feature-icon">✍️</span><h3>創作支援</h3><p>プロジェクト管理、キャラクター設定、世界観構築。5つの項目でAIがフィードバック。</p></div>
+    <div class="feature-card glass reveal reveal-d2"><span class="feature-icon">📝</span><h3>校正・推敲</h3><p>20以上の文法ルール、文体の一貫性分析、重複表現の検出で原稿を磨きます。</p></div>
+    <div class="feature-card glass reveal reveal-d3"><span class="feature-icon">📦</span><h3>出版変換</h3><p>PDF・EPUB・DOCX・HTML変換、8種の判型、表紙自動生成。</p></div>
+    <div class="feature-card glass reveal reveal-d1"><span class="feature-icon">💰</span><h3>ビジネス</h3><p>印税計算、製作費見積、出版スケジュール、損益分岐点。データで意思決定。</p></div>
+    <div class="feature-card glass reveal reveal-d2"><span class="feature-icon">📣</span><h3>マーケティング</h3><p>書店紹介文、帯コピー、SNSプロモーション自動生成。読者ターゲット分析。</p></div>
+    <div class="feature-card glass reveal reveal-d3"><span class="feature-icon">🔍</span><h3>分析・検証</h3><p>原稿統計、類似書籍検索、多言語翻訳、EPUB検証で出版前チェック。</p></div>
   </div>
 </div>
 </section>
@@ -363,13 +363,13 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section>
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">⚡ Quick Start</div>
-    <h2><em>3단계</em>면 충분합니다</h2>
+    <div class="section-label">⚡ クイックスタート</div>
+    <h2><em>3ステップ</em>で十分です</h2>
   </div>
   <div class="steps-grid">
-    <div class="step-card glass reveal reveal-d1"><div class="step-num">1</div><h3>설치</h3><p>GitHub에서 클론하고<br><code>pip install</code> 한 줄이면 끝</p></div>
-    <div class="step-card glass reveal reveal-d2"><div class="step-num">2</div><h3>실행</h3><p><code>python -m src.main</code><br>봇이 깨어납니다</p></div>
-    <div class="step-card glass reveal reveal-d3"><div class="step-num">3</div><h3>대화</h3><p>Telegram에서<br><strong>"소설 쓰자"</strong> 한마디면 시작</p></div>
+    <div class="step-card glass reveal reveal-d1"><div class="step-num">1</div><h3>インストール</h3><p>GitHubからクローンして<br><code>pip install</code>一行で完了</p></div>
+    <div class="step-card glass reveal reveal-d2"><div class="step-num">2</div><h3>実行</h3><p><code>python -m src.main</code><br>ボットが起動します</p></div>
+    <div class="step-card glass reveal reveal-d3"><div class="step-num">3</div><h3>会話</h3><p>Telegramで<br><strong>「小説を書こう」</strong>の一言で開始</p></div>
   </div>
 </div>
 </section>
@@ -378,34 +378,34 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section id="tools">
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">🧰 Tools</div>
-    <h2><em>77개</em> AI 도구</h2>
-    <p>출판에 필요한 모든 것이 내장되어 있습니다</p>
+    <div class="section-label">🧰 ツール</div>
+    <h2><em>77個</em>のAIツール</h2>
+    <p>出版に必要なすべてが内蔵されています</p>
   </div>
   <div class="tools-accordion glass-strong reveal">
     <button class="tools-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-      <span>카테고리별 도구 목록</span><span class="arrow">▾</span>
+      <span>カテゴリ別ツール一覧</span><span class="arrow">▾</span>
     </button>
     <div class="tools-content">
       <div class="tools-grid">
-        <div class="tool-cat"><h4>🔧 기본 (4)</h4><p>날짜, 날씨, 캘린더, 검색</p></div>
-        <div class="tool-cat"><h4>✍️ 창작 (14)</h4><p>프로젝트, 챕터, 개요, 시놉시스</p></div>
-        <div class="tool-cat"><h4>📖 소설 (7)</h4><p>캐릭터, 세계관, 챕터 개요</p></div>
-        <div class="tool-cat"><h4>📤 내보내기 (4)</h4><p>원고 변환, 프리셋, 표지</p></div>
-        <div class="tool-cat"><h4>✏️ 교정 (3)</h4><p>맞춤법, 문체, 중복 탐지</p></div>
-        <div class="tool-cat"><h4>📊 ISBN (3)</h4><p>바코드, 검증, 판권 페이지</p></div>
-        <div class="tool-cat"><h4>🔄 버전 (4)</h4><p>히스토리, diff, 롤백</p></div>
-        <div class="tool-cat"><h4>📦 패키징 (3)</h4><p>ZIP, 시놉시스, 체크리스트</p></div>
-        <div class="tool-cat"><h4>🤖 AI피드백 (3)</h4><p>챕터, 캐릭터, 흐름 분석</p></div>
-        <div class="tool-cat"><h4>🔎 RAG (4)</h4><p>인덱싱, 검색, 목록, 제거</p></div>
-        <div class="tool-cat"><h4>🧠 메모리 (4)</h4><p>팩트, 메모, 컨텍스트</p></div>
-        <div class="tool-cat"><h4>📈 분석 (4)</h4><p>통계, 목차, 참고문헌, 색인</p></div>
-        <div class="tool-cat"><h4>💰 비즈니스 (4)</h4><p>인세, 제작비, 일정, BEP</p></div>
-        <div class="tool-cat"><h4>📣 마케팅 (4)</h4><p>소개글, 띠지, SNS, 타겟</p></div>
-        <div class="tool-cat"><h4>🔍 시장조사 (2)</h4><p>유사도서, 카테고리</p></div>
-        <div class="tool-cat"><h4>🌐 번역 (2)</h4><p>번역, 용어집 관리</p></div>
-        <div class="tool-cat"><h4>📱 EPUB (2)</h4><p>구조 검증, 메타데이터</p></div>
-        <div class="tool-cat"><h4>🖥 웹 (3)</h4><p>미리보기, 대시보드, 통계</p></div>
+        <div class="tool-cat"><h4>🔧 基本 (4)</h4><p>日付、天気、カレンダー、検索</p></div>
+        <div class="tool-cat"><h4>✍️ 創作 (14)</h4><p>プロジェクト、チャプター、概要、シノプシス</p></div>
+        <div class="tool-cat"><h4>📖 小説 (7)</h4><p>キャラクター、世界観、チャプター概要</p></div>
+        <div class="tool-cat"><h4>📤 エクスポート (4)</h4><p>原稿変換、プリセット、表紙</p></div>
+        <div class="tool-cat"><h4>✏️ 校正 (3)</h4><p>文法、文体、重複検出</p></div>
+        <div class="tool-cat"><h4>📊 ISBN (3)</h4><p>バーコード、検証、奥付ページ</p></div>
+        <div class="tool-cat"><h4>🔄 バージョン (4)</h4><p>履歴、差分、ロールバック</p></div>
+        <div class="tool-cat"><h4>📦 パッケージ (3)</h4><p>ZIP、シノプシス、チェックリスト</p></div>
+        <div class="tool-cat"><h4>🤖 AIフィードバック (3)</h4><p>チャプター、キャラクター、フロー分析</p></div>
+        <div class="tool-cat"><h4>🔎 RAG (4)</h4><p>インデックス、検索、リスト、削除</p></div>
+        <div class="tool-cat"><h4>🧠 メモリ (4)</h4><p>ファクト、メモ、コンテキスト</p></div>
+        <div class="tool-cat"><h4>📈 分析 (4)</h4><p>統計、目次、参考文献、索引</p></div>
+        <div class="tool-cat"><h4>💰 ビジネス (4)</h4><p>印税、製作費、スケジュール、BEP</p></div>
+        <div class="tool-cat"><h4>📣 マーケティング (4)</h4><p>紹介文、帯、SNS、ターゲット</p></div>
+        <div class="tool-cat"><h4>🔍 市場調査 (2)</h4><p>類似書籍、カテゴリ</p></div>
+        <div class="tool-cat"><h4>🌐 翻訳 (2)</h4><p>翻訳、用語集</p></div>
+        <div class="tool-cat"><h4>📱 EPUB (2)</h4><p>構造検証、メタデータ</p></div>
+        <div class="tool-cat"><h4>🖥 ウェブ (3)</h4><p>プレビュー、ダッシュボード、統計</p></div>
       </div>
     </div>
   </div>
@@ -416,30 +416,30 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section id="install">
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">📋 Install</div>
-    <h2><em>5분</em>이면 시작</h2>
-    <p>복사 → 붙여넣기 → 실행</p>
+    <div class="section-label">📋 インストール</div>
+    <h2><em>5分</em>で開始</h2>
+    <p>コピー → ペースト → 実行</p>
   </div>
   <div class="reveal">
-    <div class="code-card glass-strong"><span class="c"># 저장소 클론</span>
+    <div class="code-card glass-strong"><span class="c"># リポジトリをクローン</span>
 <span class="cmd">git clone</span> <span class="str">https://github.com/mintorain/mintobot.git</span>
 <span class="cmd">cd</span> mintobot
 
-<span class="c"># 의존성 설치</span>
+<span class="c"># 依存関係をインストール</span>
 <span class="cmd">pip install</span> -r requirements.txt
 
-<span class="c"># 환경 설정</span>
+<span class="c"># 環境設定</span>
 <span class="cmd">cp</span> .env.example .env
 <span class="c">#   API_MODE=direct</span>
 <span class="c">#   ANTHROPIC_API_KEY=sk-ant-...</span>
 <span class="c">#   TELEGRAM_BOT_TOKEN=123456:ABC...</span>
 
-<span class="c"># 실행 🚀</span>
+<span class="c"># 起動 🚀</span>
 <span class="cmd">python</span> -m src.main</div>
     <div class="install-links">
-      <a href="https://console.anthropic.com" target="_blank">🔑 Anthropic API 키 →</a>
-      <a href="https://t.me/BotFather" target="_blank">🤖 Telegram 봇 생성 →</a>
-      <a href="https://github.com/mintorain/mintobot" target="_blank">📖 전체 문서 →</a>
+      <a href="https://console.anthropic.com" target="_blank">🔑 Anthropic APIキー →</a>
+      <a href="https://t.me/BotFather" target="_blank">🤖 Telegramボット作成 →</a>
+      <a href="https://github.com/mintorain/mintobot" target="_blank">📖 完全ドキュメント →</a>
     </div>
   </div>
 </div>
@@ -449,13 +449,13 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section>
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">⚙️ Modes</div>
-    <h2>실행 <em>모드</em></h2>
-    <p>환경에 맞게 선택하세요</p>
+    <div class="section-label">⚙️ モード</div>
+    <h2>実行<em>モード</em></h2>
+    <p>環境に合わせて選択してください</p>
   </div>
   <div class="modes-grid">
-    <div class="mode-card mode-direct glass reveal reveal-d1"><div class="mode-tag">⚡ Standalone</div><h3>Direct 모드</h3><p>Anthropic API 직접 호출. 설정 3줄이면 바로 사용. 개인 사용에 최적화된 독립 실행 모드.</p></div>
-    <div class="mode-card mode-gateway glass reveal reveal-d2"><div class="mode-tag">🔗 Advanced</div><h3>Gateway 모드</h3><p>OpenClaw Gateway 경유. 멀티 에이전트, 세션 관리 등 고급 기능을 활용할 수 있습니다.</p></div>
+    <div class="mode-card mode-direct glass reveal reveal-d1"><div class="mode-tag">⚡ スタンドアロン</div><h3>Directモード</h3><p>Anthropic APIを直接呼び出し。設定3行ですぐ使用可能。個人利用に最適化された独立実行モード。</p></div>
+    <div class="mode-card mode-gateway glass reveal reveal-d2"><div class="mode-tag">🔗 アドバンスド</div><h3>Gatewayモード</h3><p>OpenClaw Gateway経由。マルチエージェント、セッション管理などの高度な機能を活用できます。</p></div>
   </div>
 </div>
 </section>
@@ -464,26 +464,26 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
 <section>
 <div class="container">
   <div class="section-header reveal">
-    <div class="section-label">💬 Widget</div>
-    <h2>웹 <em>위젯</em></h2>
-    <p>홈페이지에 AI 채팅을 한 줄로 추가하세요</p>
+    <div class="section-label">💬 ウィジェット</div>
+    <h2>ウェブ<em>ウィジェット</em></h2>
+    <p>ホームページにAIチャットを一行で追加</p>
   </div>
   <div class="widget-preview reveal">
     <div class="widget-mockup">
       <div class="mock-header">
         <div class="mock-avatar">🌧️</div>
-        <span class="mock-name">민토봇 AI</span>
+        <span class="mock-name">MintoBot AI</span>
         <div class="mock-dot"></div>
       </div>
       <div class="mock-msgs">
-        <div class="mock-bubble mock-ai">안녕하세요! 민토봇입니다 🌧️</div>
-        <div class="mock-bubble mock-user">출판 문의할게요</div>
-        <div class="mock-bubble mock-ai">네! 어떤 장르의 원고를 준비하고 계신가요?</div>
-        <div class="mock-bubble mock-user">에세이 한 편 쓰고 있어요</div>
+        <div class="mock-bubble mock-ai">こんにちは！MintoBot です 🌧️</div>
+        <div class="mock-bubble mock-user">出版について相談があります</div>
+        <div class="mock-bubble mock-ai">はい！どのジャンルの原稿を準備されていますか？</div>
+        <div class="mock-bubble mock-user">エッセイを一つ書いています</div>
       </div>
     </div>
     <div>
-      <div class="code-card glass-strong"><span class="c">&lt;!-- HTML에 한 줄 추가 --&gt;</span>
+      <div class="code-card glass-strong"><span class="c">&lt;!-- HTMLに一行追加 --&gt;</span>
 &lt;<span class="cmd">script</span>
   <span class="str">src</span>=<span class="str">"https://HOST:8080/widget/chat.js"</span>
   <span class="str">data-api</span>=<span class="str">"https://HOST:8080"</span>
@@ -500,9 +500,9 @@ footer{border-top:1px solid var(--border);padding:72px 0 52px;position:relative;
     <div class="footer-col">
       <div class="footer-profile">
         <div class="footer-avatar">🌧️</div>
-        <div><div class="footer-name">이신우</div><div class="footer-role">생성형AI활용 영상제작 교육전문가</div></div>
+        <div><div class="footer-name">イ・シヌ</div><div class="footer-role">生成AI活用 映像制作 教育専門家</div></div>
       </div>
-      <p class="footer-desc">두온교육(주) 출판사 대표 · 미래이음연구소 소장<br>AI 관련 서적 16권 저자</p>
+      <p class="footer-desc">Duon Education(株) 出版社代表 · 未来つなぎ研究所所長<br>AI関連書籍16冊の著者</p>
     </div>
     <div class="footer-col">
       <h4>Links</h4>
