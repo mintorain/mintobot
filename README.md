@@ -220,6 +220,12 @@ http://localhost:8080/preview/{project_id}
 | | `get_project_stats` | 통계 조회 |
 | | `set_writing_goal` | 목표 설정 |
 | | `get_project_status` | 상태 조회 |
+| **Gmail** | `gmail_list` | 받은편지함 조회 |
+| | `gmail_read` | 이메일 상세 읽기 |
+| | `gmail_search` | Gmail 검색 |
+| | `gmail_summary` | 미읽음 요약 |
+| **TTS** | `tts_text` | 텍스트→음성 변환 |
+| | `tts_chapter` | 챕터 낭독 |
 
 </details>
 
@@ -285,6 +291,8 @@ mintobot/
 - Google Calendar 서비스 계정 (일정 관리)
 - Pandoc (PDF/DOCX 변환)
 - WeasyPrint (고품질 PDF)
+- gTTS (텍스트→음성 변환)
+- Google Gmail API 자격증명 (Gmail 연동)
 
 ---
 
