@@ -187,13 +187,24 @@ class AgentCore:
         if anthropic_tools:
             payload["tools"] = anthropic_tools
 
-        resp = await self._http.post(
-            f"{self.anthropic_base_url}/v1/messages",
-            headers={
+        # OAuth 토큰(sk-ant-oat01-)이면 Bearer + beta 헤더, 아니면 x-api-key
+        if self.anthropic_api_key.startswith("sk-ant-oat"):
+            headers = {
+                "Authorization": f"Bearer {self.anthropic_api_key}",
+                "anthropic-version": "2023-06-01",
+                "anthropic-beta": "oauth-2025-04-20",
+                "Content-Type": "application/json",
+            }
+        else:
+            headers = {
                 "x-api-key": self.anthropic_api_key,
                 "anthropic-version": "2023-06-01",
                 "Content-Type": "application/json",
-            },
+            }
+
+        resp = await self._http.post(
+            f"{self.anthropic_base_url}/v1/messages",
+            headers=headers,
             json=payload,
         )
 
@@ -288,8 +299,19 @@ class AgentCore:
         history = self._get_history(user_id)
         history.append({"role": "user", "content": message})
 
-        if len(history) > 50:
-            history = history[-50:]
+        # 긴 메시지(소설 본문 등)는 히스토리를 최소화하여 컨텍스트 초과 방지
+        msg_len = len(message)
+        if msg_len > 8000:
+            # 매우 긴 경우 최근 3턴만 유지
+            keep = 6
+        elif msg_len > 4000:
+            # 중간 길이는 최근 10턴 유지
+            keep = 20
+        else:
+            keep = 50
+
+        if len(history) > keep:
+            history = history[-keep:]
             self._histories[user_id] = history
 
         messages = [{"role": "system", "content": system_prompt}] + history

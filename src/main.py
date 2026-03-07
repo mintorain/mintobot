@@ -15,7 +15,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from typing import Optional
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import uvicorn
 
 from fastapi.staticfiles import StaticFiles
@@ -133,6 +134,127 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
+
+
+# ── 소설 직접 저장/로드 API (AI 경유 없이 파일에 바로 저장) ─────────────────
+
+
+class SaveChapterRequest(BaseModel):
+    project_id: str
+    chapter_num: int
+    content: str
+
+
+class SaveSynopsisRequest(BaseModel):
+    project_id: str
+    content: str
+
+
+class SaveNotesRequest(BaseModel):
+    project_id: str
+    content: str
+
+
+def _ensure_project(engine, project_id: str, title: str = ""):
+    """프로젝트가 없으면 meta.yaml + 디렉토리 구조 자동 생성"""
+    import yaml
+    from datetime import datetime
+    from src.utils.git_manager import GitManager
+    project_dir = engine.pm.base_dir / project_id
+    meta_path = project_dir / "meta.yaml"
+    if not meta_path.exists():
+        project_dir.mkdir(parents=True, exist_ok=True)
+        (project_dir / "chapters").mkdir(exist_ok=True)
+        (project_dir / "characters").mkdir(exist_ok=True)
+        (project_dir / "worldbuilding").mkdir(exist_ok=True)
+        now = datetime.now().isoformat()
+        meta = {
+            "id": project_id,
+            "title": title or project_id,
+            "type": "novel",
+            "genre": "",
+            "topic": "",
+            "status": "draft",
+            "created_at": now,
+            "updated_at": now,
+        }
+        meta_path.write_text(yaml.dump(meta, allow_unicode=True), encoding="utf-8")
+        git = GitManager(project_dir)
+        git.commit("프로젝트 자동 생성")
+
+
+@app.post("/api/novel/save-chapter")
+async def api_save_chapter(req: SaveChapterRequest):
+    """소설 챕터 직접 저장 (컨텍스트 초과 없이 대용량 텍스트 저장)"""
+    try:
+        from src.creative.novel_engine import NovelEngine
+        engine = NovelEngine()
+        _ensure_project(engine, req.project_id)
+        engine.save_chapter(req.project_id, req.chapter_num, req.content)
+        char_count = len(req.content)
+        return {
+            "ok": True,
+            "message": f"챕터 {req.chapter_num} 저장 완료 ({char_count:,}자)",
+            "project_id": req.project_id,
+            "chapter_num": req.chapter_num,
+            "char_count": char_count,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/novel/load-chapter")
+async def api_load_chapter(project_id: str, chapter_num: int):
+    """소설 챕터 불러오기"""
+    try:
+        from src.creative.novel_engine import NovelEngine
+        engine = NovelEngine()
+        content = engine.get_chapter(project_id, chapter_num)
+        if content is None:
+            raise HTTPException(status_code=404, detail="챕터를 찾을 수 없습니다.")
+        return {"ok": True, "project_id": project_id, "chapter_num": chapter_num, "content": content}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/novel/save-synopsis")
+async def api_save_synopsis(req: SaveSynopsisRequest):
+    """시놉시스 직접 저장"""
+    try:
+        from src.creative.novel_engine import NovelEngine
+        engine = NovelEngine()
+        _ensure_project(engine, req.project_id)
+        engine.save_synopsis(req.project_id, req.content)
+        return {"ok": True, "message": f"시놉시스 저장 완료 ({len(req.content):,}자)"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/novel/save-notes")
+async def api_save_notes(req: SaveNotesRequest):
+    """작가 메모 직접 저장"""
+    try:
+        from src.creative.novel_engine import NovelEngine
+        engine = NovelEngine()
+        _ensure_project(engine, req.project_id)
+        engine.save_notes(req.project_id, req.content)
+        return {"ok": True, "message": f"메모 저장 완료 ({len(req.content):,}자)"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/novel/projects")
+async def api_list_projects():
+    """소설 프로젝트 목록 조회"""
+    try:
+        from src.creative.novel_engine import NovelEngine
+        engine = NovelEngine()
+        projects = engine.pm.list_projects() if hasattr(engine.pm, "list_projects") else []
+        return {"ok": True, "projects": projects}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
