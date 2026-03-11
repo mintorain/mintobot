@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Threads Auth</title>
+<style>
+body{background:#111;color:#fff;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+.box{background:#1a1a2e;border:2px solid #7c3aed;padding:40px;border-radius:12px;max-width:600px;width:90%;}
+h2{color:#a78bfa;margin:0 0 20px;}
+.code{background:#0d0d1a;color:#0ff;padding:20px;border-radius:8px;word-break:break-all;font-size:13px;margin:16px 0;}
+button{background:#7c3aed;color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:14px;}
+</style></head>
+<body><div class="box">
+<h2 id="title">⏳ 인증 처리 중...</h2>
+<div class="code" id="result">-</div>
+<button onclick="navigator.clipboard.writeText(document.getElementById('result').innerText)">복사</button>
+</div>
+<script>
+const p = new URLSearchParams(location.search);
+const code = p.get('code'), err = p.get('error_message');
+if(code){
+  document.getElementById('title').innerHTML='✅ 인증 성공! 아래 코드를 복사하세요';
+  document.getElementById('result').innerText=code;
+}else if(err){
+  document.getElementById('title').innerHTML='❌ 오류';
+  document.getElementById('result').innerText=decodeURIComponent(err);
+}
+</script>
+</div></body></html>
